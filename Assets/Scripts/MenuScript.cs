@@ -15,6 +15,16 @@ public class MenuScript : MonoBehaviour
     public TMP_InputField length;
     public GameObject errorText1;
     public GameObject errorText2;
+    public String GPTrack;
+    public String GPDriver;
+    public GameObject GPTrackMenu;
+    public TMP_Dropdown GPDriverDropdown;
+    public GameObject GPDriverMenu;
+    public GameObject GPMenu;
+    public String SeasonDriver;
+    public TMP_Dropdown ChampionshipDriverDropdown;
+    public GameObject ChampionshipDriverMenu;
+    public GameObject ChampionshipMenu;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +43,25 @@ public class MenuScript : MonoBehaviour
     public void StartRace()
     {
         SceneManager.LoadScene("Track01");
+    }
+
+    public void SelectGPTrack()
+    {
+        GPTrack = "Track01";
+        GPTrackMenu.SetActive(false);
+        GPDriverMenu.SetActive(true);
+    }
+    public void SelectGPDriver()
+    {
+        GPDriver = GPDriverDropdown.options[GPDriverDropdown.value].text;
+        GPDriverMenu.SetActive(false);
+        GPMenu.SetActive(true);
+    }
+    public void SelectChampionshipDriver()
+    {
+        SeasonDriver = ChampionshipDriverDropdown.options[ChampionshipDriverDropdown.value].text;
+        ChampionshipDriverMenu.SetActive(false);
+        ChampionshipMenu.SetActive(true);
     }
     public void GenerateTrack()
     {
