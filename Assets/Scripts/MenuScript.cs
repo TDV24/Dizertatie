@@ -17,6 +17,7 @@ public class MenuScript : MonoBehaviour
     public GameObject errorText1;
     public GameObject errorText2;
     //menu select modes
+    public TMP_Dropdown RaceDropdown;
     public String GPTrack;
     public String GPDriver;
     public GameObject GPTrackMenu;
@@ -99,6 +100,8 @@ public class MenuScript : MonoBehaviour
     }
     public void StartRace()
     {
+        PlayerPrefs.SetString("RaceDriver", RaceDropdown.options[RaceDropdown.value].text);
+        PlayerPrefs.SetInt("GameMode", 1);
         SceneManager.LoadScene("Track01");
     }
 
