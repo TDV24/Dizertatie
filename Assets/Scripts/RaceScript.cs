@@ -8,7 +8,13 @@ public class RaceScript : MonoBehaviour
 {
     public TextMeshProUGUI laptext;
     public TextMeshProUGUI positiontext;
-    public GameObject panel;
+    public TextMeshProUGUI leaderboardtext;
+    public GameObject Endpanel;
+    public GameObject Pausepanel;
+    public GameObject Redlights;
+    public AudioSource audioSource;
+    public AudioClip redbeep;
+    public float remainingtime = 7f;
     int car1laps = 0;
     int car2laps = 0;
     int car4laps = 0;
@@ -22,7 +28,7 @@ public class RaceScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        StartCoroutine(StartRaceRoutine());
     }
 
     // Update is called once per frame
@@ -38,7 +44,7 @@ public class RaceScript : MonoBehaviour
         }
         if(car16laps == 3)
         {
-            panel.SetActive(true);
+            Endpanel.SetActive(true);
             Time.timeScale = 0.0f;
             positionCount();
 
@@ -101,5 +107,55 @@ public class RaceScript : MonoBehaviour
     public void ExitRace()
     {
         SceneManager.LoadScene("Menu");
+    }
+    public void Pause()
+    {
+        Time.timeScale = 0.0f;
+        Pausepanel.SetActive(true);
+    }
+    public void Resume()
+    {
+        Time.timeScale = 1.0f;
+        Pausepanel.SetActive(false);
+    }
+    IEnumerator StartRaceRoutine()
+    {
+        List<GameObject> lights = new List<GameObject>();
+        foreach (Transform light in Redlights.GetComponentsInChildren<Transform>(true)) 
+        {
+            lights.Add(light.gameObject);
+        }
+        while(remainingtime > 0)
+        {
+            if(remainingtime == 5f)
+            {
+                lights[1].SetActive(true);
+                audioSource.PlayOneShot(redbeep);
+            }
+            if (remainingtime == 4f)
+            {
+                lights[2].SetActive(true);
+                audioSource.PlayOneShot(redbeep);
+            }
+            if (remainingtime == 3f)
+            {
+                lights[3].SetActive(true);
+                audioSource.PlayOneShot(redbeep);
+            }
+            if (remainingtime == 2f)
+            {
+                lights[4].SetActive(true);
+                audioSource.PlayOneShot(redbeep);
+            }
+            if (remainingtime == 1f)
+            {
+                lights[5].SetActive(true);
+                audioSource.PlayOneShot(redbeep);
+            }
+            yield return new WaitForSeconds(1f);
+            remainingtime--;
+        }
+        Redlights.SetActive(false);
+        yield return new WaitForSeconds(1f);
     }
 }
