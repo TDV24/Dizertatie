@@ -6,52 +6,59 @@ using UnityEngine;
 
 public class PlayerCar : MonoBehaviour
 {
-    public static PlayerCar instance;
-    public float speed = 0;
-    public float maxSpeed = 0.18f;
-    public float acceleration = 0.02f;
-    Vector3 moveDirection;
-    CharacterController characterController;
-    // Start is called before the first frame update
-    private void Awake()
-    {
-        instance = this;
-    }
+    Vector3 MovementInput;
+    public float acceleration = 12f;
+    public float steering = 1f;
+    public float maxSpeed = 10f;
+    [SerializeField]private float speed = 0f;
+
+    private Rigidbody rb;
+    private Quaternion turnRotation;
+
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        rb = gameObject.GetComponent<Rigidbody>();
     }
-
-    // Update is called once per frame
+    private void OnEnable()
+    {
+        rb = gameObject.GetComponent<Rigidbody>();
+    }
     void Update()
     {
-        moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        moveDirection = transform.TransformDirection(moveDirection);
+        // Accelerate/Brake
         if (Input.GetKey(KeyCode.W))
         {
-            if (speed <= maxSpeed)
-            {
+            if(speed < maxSpeed)
                 speed += acceleration * Time.deltaTime;
-            }
         }
-        if (Input.GetKey(KeyCode.S))
+        else 
         {
-            if (speed > 0.01)
-            {
-                speed -= acceleration * Time.deltaTime * 2;
-            }
+            if (speed > 0)
+                speed -= acceleration * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.A))
+        if(Input.GetKeyDown(KeyCode.S))
         {
-            gameObject.transform.Rotate(0, -270.0f * Time.deltaTime, 0);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            gameObject.transform.Rotate(0, 270.0f * Time.deltaTime, 0);
-        }
-        moveDirection *= speed;
-        moveDirection.y -= (50.8f * Time.deltaTime);
-        characterController.Move(moveDirection * Time.deltaTime);
+            if(speed > 0)
+                speed -= acceleration * Time.deltaTime;
+        }   
+        // Get input and move
+        MovementInput = new Vector3(0f, 0f, 1f); // Always forward (z-axis)
+        Vector3 moveVector = transform.TransformDirection(MovementInput) * speed;
+        rb.velocity = new Vector3(moveVector.x, rb.velocity.y, moveVector.z);
 
+        if(Mathf.Abs(speed) > 0.1f)
+        {
+            float turn = steering * Time.fixedDeltaTime;
+            turnRotation = Quaternion.Euler(0f, 0f, 0f);
+            if (Input.GetKey(KeyCode.A))
+            {
+                turnRotation = Quaternion.Euler(0f, -turn, 0f);
+            }
+            if(Input.GetKey(KeyCode.D)) 
+            {
+                turnRotation = Quaternion.Euler(0f, turn, 0f);
+            }
+            rb.MoveRotation(rb.rotation * turnRotation);
+        }
     }
 }
