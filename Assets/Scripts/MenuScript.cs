@@ -18,9 +18,14 @@ public class MenuScript : MonoBehaviour
     public GameObject errorText2;
     //menu select modes
     public TMP_Dropdown RaceDropdown;
+    public TMP_Dropdown RaceTrackDropdown;
+    public String RaceTrack;
+    public GameObject RaceTrackMenu;
+    public GameObject RaceDriverMenu;
     public String GPTrack;
     public String GPDriver;
     public GameObject GPTrackMenu;
+    public TMP_Dropdown GPTrackDropdown;
     public TMP_Dropdown GPDriverDropdown;
     public GameObject GPDriverMenu;
     public GameObject GPMenu;
@@ -102,12 +107,17 @@ public class MenuScript : MonoBehaviour
     {
         PlayerPrefs.SetString("RaceDriver", RaceDropdown.options[RaceDropdown.value].text);
         PlayerPrefs.SetInt("GameMode", 1);
-        SceneManager.LoadScene("Track01");
+        SceneManager.LoadScene(RaceTrack);
     }
-
+    public void SelectRaceTrack()
+    {
+        RaceTrack = RaceTrackDropdown.options[RaceTrackDropdown.value].text;
+        RaceTrackMenu.SetActive(false);
+        RaceDriverMenu.SetActive(true);
+    }
     public void SelectGPTrack()
     {
-        GPTrack = "Track01";
+        GPTrack = GPTrackDropdown.options[GPTrackDropdown.value].text;
         GPTrackMenu.SetActive(false);
         GPDriverMenu.SetActive(true);
     }
@@ -255,7 +265,7 @@ public class MenuScript : MonoBehaviour
             errorText1.gameObject.SetActive(true);
             return;
         }
-        if(int.Parse(width.text) < 100 || int.Parse(length.text) < 100) 
+        if(int.Parse(width.text) < 300 || int.Parse(length.text) < 300) 
         { 
             errorText2.gameObject.SetActive(true);
             return;

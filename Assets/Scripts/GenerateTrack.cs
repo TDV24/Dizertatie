@@ -8,9 +8,12 @@ public class GenerateTrack : MonoBehaviour
 {
     public GameObject corner;
     public GameObject roadPrefab;
+    public GameObject startingLinePrefab;
     int noOfCorners;
     int width;
     int length;
+    int maxIndex = 0;
+    float maxDistance = 0f;
     private Vector3[] pos;
     // Start is called before the first frame update
     void Start()
@@ -36,26 +39,45 @@ public class GenerateTrack : MonoBehaviour
         float minSegmentLength = 0.1f;
         pos = PointsSorting(pos);
         Quaternion lastrotation = Quaternion.identity;
-        List<Vector3> loopedPoints = pos.ToList();
-        loopedPoints.Insert(0, pos[pos.Length - 1]);
-        loopedPoints.Add(pos[0]);
-        loopedPoints.Add(pos[1]);
-        List<Vector3> curvePoints = GenerateCatmullRomSpline(loopedPoints, 5);
-        curvePoints = FilterClosePoints(curvePoints, 1.0f);
-        for(int i = 0; i < curvePoints.Count - 1; i++) 
+        for (int i = 0; i < pos.Length - 1; i++)
         {
-            Vector3 start = curvePoints[i];
-            Vector3 end = curvePoints[i + 1]; 
+            float dist = Vector3.Distance(pos[i], pos[i + 1]);
+            if (dist > maxDistance)
+            {
+                maxDistance = dist;
+                maxIndex = i;
+            }
+        }
+        List<Vector3> rotatedPos = new List<Vector3>();
+        for (int i = maxIndex + 1; i < maxIndex + 1 + pos.Length; i++)
+        {
+            rotatedPos.Add(pos[i % pos.Length]);
+        }
+        pos = rotatedPos.ToArray();
+        Debug.Log(pos[0]);
+        List<Vector3> loopedPoints = pos.ToList();
+        List<Vector3> curvePoints = GenerateCatmullRomSpline(loopedPoints, 6);
+        curvePoints = FilterClosePoints(curvePoints, 1.0f);
+        Vector3 start = pos[maxIndex];
+        Vector3 end = pos[maxIndex + 1];
 
-            Vector3 direction = end - start;
+        Vector3 direction = end - start;
+        Vector3 midPoint = start + direction / 2f;
+        startingLinePrefab.transform.localScale = new Vector3(startingLinePrefab.transform.localScale.x, 
+            startingLinePrefab.transform.localScale.y, Vector3.Distance(start, end));
+        Instantiate(startingLinePrefab, midPoint, Quaternion.LookRotation(direction));
+        for (int i = 0; i < curvePoints.Count - 1; i++) 
+        {
+            start = curvePoints[i];
+            end = curvePoints[i + 1];
+            direction = end - start;
             float distance = direction.magnitude;
             if (distance < minSegmentLength) continue;
-            Vector3 midPoint = start + direction / 2;
-
+            midPoint = start + direction / 2;
             GameObject road = Instantiate(roadPrefab, midPoint, Quaternion.LookRotation(direction));
             Vector3 scale = road.transform.localScale;
             scale.z = distance;
-            road.transform.localScale = new Vector3(road.transform.localScale.x, road.transform.localScale.y, distance);
+            road.transform.localScale = new Vector3(road.transform.localScale.x, road.transform.localScale.y, distance); 
         }
     }
 

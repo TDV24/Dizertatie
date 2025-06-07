@@ -4,7 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PlayerCar : MonoBehaviour
+public class CarController : MonoBehaviour
 {
     Vector3 MovementInput;
     public float acceleration = 12f;
@@ -18,10 +18,12 @@ public class PlayerCar : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
     private void OnEnable()
     {
         rb = gameObject.GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
     void Update()
     {
@@ -42,7 +44,7 @@ public class PlayerCar : MonoBehaviour
                 speed -= acceleration * Time.deltaTime;
         }   
         // Get input and move
-        MovementInput = new Vector3(0f, 0f, 1f); // Always forward (z-axis)
+        MovementInput = new Vector3(0f, 0f, 1f);
         Vector3 moveVector = transform.TransformDirection(MovementInput) * speed;
         rb.velocity = new Vector3(moveVector.x, rb.velocity.y, moveVector.z);
 

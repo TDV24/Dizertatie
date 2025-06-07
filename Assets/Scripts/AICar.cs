@@ -11,6 +11,7 @@ public class AICar : MonoBehaviour
     public GameObject[] waypoints;
     public float rotationSpeed = 8.0f;
     public float maxSpeed = 4.0f;
+    Rigidbody rb;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -18,7 +19,15 @@ public class AICar : MonoBehaviour
     }
     void Start()
     {
-       
+        GameObject points = GameObject.Find("Waypoints");
+        List<GameObject> list = new List<GameObject>();
+        for (int i = 0; i < points.transform.childCount; i++)
+        {
+            list.Add(points.transform.GetChild(i).gameObject);
+        }
+        waypoints = list.ToArray();
+        rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
     // Update is called once per frame

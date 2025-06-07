@@ -739,6 +739,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   corner: {fileID: 3136522709452424229, guid: fd289f2d2c4e54445b76cb96824f9cff, type: 3}
   roadPrefab: {fileID: 6261441560490579918, guid: edb01a01fb5874344972a9bafc49fd33, type: 3}
+  startingLinePrefab: {fileID: 7470923281360103496, guid: 3bc36444423765e4888372257c58ffd9, type: 3}
 --- !u!4 &2012841262
 Transform:
   m_ObjectHideFlags: 0

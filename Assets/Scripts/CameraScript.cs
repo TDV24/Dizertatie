@@ -13,7 +13,7 @@ public class CameraScript : MonoBehaviour
     {
         if(PlayerPrefs.GetInt("GameMode") == 1)
         {
-            playercar = GameObject.Find(PlayerPrefs.GetString("RaceDriver"));
+            playercar = GameObject.Find(PlayerPrefs.GetString("RaceDriver") + "(Clone)");
             playercar.transform.Find("Camera").gameObject.SetActive(true);
         }
     }
