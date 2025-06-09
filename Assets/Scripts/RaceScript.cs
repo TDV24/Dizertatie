@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,16 +24,11 @@ public class RaceScript : MonoBehaviour
     public GameObject[] gridslots;
     GameObject playercar;
     List<GameObject> spawnedcars = new List<GameObject>();
-    int car1laps = 0;
-    int car2laps = 0;
-    int car4laps = 0;
-    int car11laps = 0;
-    int car16laps = 0;
-    int car23laps = 0;
-    int car44laps = 0;
-    int car55laps = 0;
-    int car63laps = 0;
-    int car81laps = 0;
+    public Dictionary<GameObject, CarRaceData> raceData = new Dictionary<GameObject, CarRaceData>();
+    public GameObject[] Waypoints;
+    public GameObject pointsobj;
+    public bool raceended = false;
+    int totallaps;
     // Start is called before the first frame update
     void Start()
     {
@@ -45,15 +41,24 @@ public class RaceScript : MonoBehaviour
             list.Add(grid.transform.GetChild(i).gameObject);
         }
         gridslots = list.ToArray();
-        if(PlayerPrefs.GetInt("GameMode") == 1)
+        GameObject points = GameObject.Find("Waypoints");
+        List<GameObject> wlist = new List<GameObject>();
+        for (int i = 0; i < points.transform.childCount; i++)
         {
+            wlist.Add(points.transform.GetChild(i).gameObject);
+        }
+        Waypoints = list.ToArray();
+        if (PlayerPrefs.GetInt("GameMode") == 1)
+        {
+            totallaps = 3;
             StopCoroutine(StartRaceRoutine());
             ShuffleCars(cars);
             for(int i = 0; i < cars.Length; i++) 
             {
                 GameObject car = Instantiate(cars[i],
                     new Vector3(gridslots[i].transform.position.x, 0.7f, gridslots[i].transform.position.z), gridslots[i].transform.rotation);
-                spawnedcars.Add(car);
+                spawnedcars.Add(car); 
+                raceData[car] = new CarRaceData();
             }
             playercar = GameObject.Find(PlayerPrefs.GetString("RaceDriver") + "(Clone)");
             StartCoroutine(StartRaceRoutine());
@@ -64,21 +69,29 @@ public class RaceScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(car16laps == 0)
+        foreach (GameObject car in spawnedcars) 
         {
-            laptext.text = "Laps: 1/2";
+            if (raceData[car].lap > 0)
+                UpdateCarProgress(car);
+        }
+        if (raceData[playercar].lap == 0)
+        {
+            laptext.text = "Laps: 1/" + totallaps.ToString();
         }
         else
         {
-            laptext.text = "Laps: " + car16laps.ToString() + "/3";
+            laptext.text = "Laps: " + raceData[playercar].lap.ToString() + "/" +totallaps.ToString();
             laptime += Time.deltaTime;
+                
         }
-        if(car16laps == 4)
+        if(raceData[playercar].lap > totallaps && !raceended)
         {
+            raceended = true;
             Endpanel.SetActive(true);
             Time.timeScale = 0.0f;
             positionCount();
-
+            if(PlayerPrefs.GetInt("GameMode") == 1 || PlayerPrefs.GetInt("GameMode") == 3 || PlayerPrefs.GetInt("GameMode") == 5)
+                pointsobj.SetActive(true);
         }
         laptimetext.text = "Lap Time: " + FormatTime(laptime);
         if (besttime == Mathf.Infinity)
@@ -87,84 +100,59 @@ public class RaceScript : MonoBehaviour
             bestlaptext.text = "Best Time: " + FormatTime(besttime);
     }
 
-    public void increaseLaps(string name)
+    public void increaseLaps(GameObject car)
     {
-        if(name == "Car#1")
-            car1laps++;
-        if (name == "Car#2")
-            car2laps++;
-        if (name == "Car#4")
-            car4laps++;
-        if (name == "Car#11")
-            car11laps++;
-        if (name == "Car#16")
+        if (car == playercar && raceData[playercar].lap > 0)
         {
-            if(car16laps > 0)
+            Timing = false;
+            if (laptime < besttime)
             {
-                Timing = false;
-                if(laptime < besttime)
-                {
-                    besttime = laptime;
-                }
+                besttime = laptime;
             }
-            car16laps++;
             Timing = true;
             laptime = 0f;
         }
-        if (name == "Car#23")
-            car23laps++;
-        if (name == "Car#44")
-            car44laps++;
-        if (name == "Car#55")
-            car55laps++;
-        if (name == "Car#63")
-            car63laps++;
-        if (name == "Car#81")
-            car81laps++;
-        if (name == playercar.name)
-        {
-            if (car16laps > 0)
-            {
-                Timing = false;
-                if (laptime < besttime)
-                {
-                    besttime = laptime;
-                }
-            }
-            car16laps++;
-            Timing = true;
-            laptime = 0f;
-        }
+        raceData[car].lap++;
     }
     void positionCount()
     {
-        int countPos = 1;
-        if (car1laps == 3)
-            countPos++;
-        if (car2laps == 3)
-            countPos++;
-        if (car4laps == 3)
-            countPos++;
-        if (car11laps == 3)
-            countPos++;
-        if (car23laps == 3)
-            countPos++;
-        if (car44laps == 3)
-            countPos++;
-        if (car55laps == 3)
-            countPos++;
-        if (car63laps == 3)
-            countPos++;
-        if (car81laps == 3)
-            countPos++;
-        if (countPos == 1)
-            positiontext.text = "Final position: 1st";
-        else if (countPos == 2)
-            positiontext.text = "Final position: 2nd";
-        else if (countPos == 3)
-            positiontext.text = "Final position: 3rd";
-        else
-            positiontext.text = "Final position: " + countPos.ToString() + "th";
+        var ordered = raceData.OrderByDescending(kv => kv.Value.lap)
+                              .ThenByDescending(kv => kv.Value.currentWaypointIndex)
+                              .ThenByDescending(kv => kv.Value.progressBetweenWaypoints)
+                              .Select(kv => kv.Key)
+                              .ToList();
+        for(int i = 0; i < ordered.Count; i++) 
+        {
+            GameObject car = ordered[i];
+            string name = car.name;
+            if(name == playercar.name)
+            {
+                positiontext.text += $"<color=orange>{i + 1}. {name.Substring(0, name.Length - 7)}</color>\n";
+            }
+            else
+            {
+                positiontext.text += $"{i + 1}. {name.Substring(0, name.Length - 7)}\n";
+            }
+        }
+    }
+    void UpdateCarProgress(GameObject car)
+    {
+        var data = raceData[car];
+        Vector3 carPos = car.transform.position;
+        int currentIndex = data.currentWaypointIndex;
+        int nextIndex = (currentIndex + 1) % Waypoints.Length;
+        Vector3 currentWP = Waypoints[currentIndex].transform.position;
+        Vector3 nextWP = Waypoints[nextIndex].transform.position;
+        float segmentLength = Vector3.Distance(currentWP, nextWP);
+        float distToNextWP = Vector3.Distance(carPos, nextWP);
+        float progress = Mathf.Clamp01(1f - distToNextWP / segmentLength);
+
+        if (distToNextWP < 2f) 
+        {
+            data.currentWaypointIndex = nextIndex;
+        }
+
+        data.progressBetweenWaypoints = progress;
     }
     public void ExitRace()
     {
@@ -252,5 +240,11 @@ public class RaceScript : MonoBehaviour
             array[i] = array[randomIndex];
             array[randomIndex] = temp;
         }
+    }
+    public class CarRaceData
+    {
+        public int lap = 0;
+        public int currentWaypointIndex = 0;
+        public float progressBetweenWaypoints = 0f;
     }
 }

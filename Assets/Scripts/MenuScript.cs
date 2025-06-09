@@ -260,7 +260,7 @@ public class MenuScript : MonoBehaviour
     }
     public void GenerateTrack()
     {
-        if (int.Parse(corners.text) < 2)
+        if (int.Parse(corners.text) < 3)
         {
             errorText1.gameObject.SetActive(true);
             return;

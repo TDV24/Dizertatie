@@ -11,11 +11,8 @@ public class CameraScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(PlayerPrefs.GetInt("GameMode") == 1)
-        {
-            playercar = GameObject.Find(PlayerPrefs.GetString("RaceDriver") + "(Clone)");
-            playercar.transform.Find("Camera").gameObject.SetActive(true);
-        }
+        playercar = GameObject.Find(PlayerPrefs.GetString("RaceDriver") + "(Clone)");
+        playercar.transform.Find("Camera").gameObject.SetActive(true);
     }
 
     // Update is called once per frame

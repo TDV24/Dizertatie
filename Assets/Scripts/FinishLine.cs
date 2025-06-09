@@ -18,7 +18,6 @@ public class FinishLine : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log(other.gameObject.name);
-        raceScript.increaseLaps(other.gameObject.name);
+        raceScript.increaseLaps(other.gameObject);
     }
 }

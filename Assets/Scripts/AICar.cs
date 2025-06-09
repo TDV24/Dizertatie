@@ -29,6 +29,18 @@ public class AICar : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
+    private void OnEnable()
+    {
+        GameObject points = GameObject.Find("Waypoints");
+        List<GameObject> list = new List<GameObject>();
+        for (int i = 0; i < points.transform.childCount; i++)
+        {
+            list.Add(points.transform.GetChild(i).gameObject);
+        }
+        waypoints = list.ToArray();
+        rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+    }
 
     // Update is called once per frame
     void Update()

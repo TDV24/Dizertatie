@@ -9,6 +9,7 @@ public class GenerateTrack : MonoBehaviour
     public GameObject corner;
     public GameObject roadPrefab;
     public GameObject startingLinePrefab;
+    public GameObject savePanel;
     int noOfCorners;
     int width;
     int length;
@@ -22,17 +23,23 @@ public class GenerateTrack : MonoBehaviour
         length = PlayerPrefs.GetInt("TrackLength");
         noOfCorners = PlayerPrefs.GetInt("noOfCorners");
         pos = new Vector3[noOfCorners];
-        float radius = length / 2f;
+        float halfLength = length / 2f;
+        float halfWidth = width / 2f;
         for (int i = 0; i < noOfCorners; i++)
         {
             float angle = (360f / noOfCorners) * i;
             float rad = Mathf.Deg2Rad * angle;
-            float noise = Random.Range(-radius * 0.3f, radius * 0.3f); // +/- 30% noise
-            float r = radius + noise;
+            float x = Mathf.Cos(rad) * halfLength;
+            float z = Mathf.Sin(rad) * halfWidth;
+            float radius = Mathf.Sqrt(x * x + z * z);
+            float noise = Random.Range(-radius * 0.3f, radius * 0.3f);
+            float scale = (radius + noise) / radius;
+            x *= scale;
+            z *= scale;
             pos[i] = new Vector3(
-                500 + Mathf.Cos(rad) * r,
+                500 + x,
                 1,
-                500 + Mathf.Sin(rad) * r
+                500 + z
             );
             Instantiate(corner, pos[i], Quaternion.identity);
         }
@@ -87,6 +94,11 @@ public class GenerateTrack : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Z)) 
         {
             SceneManager.LoadScene("Menu");
+            savePanel.SetActive(false);
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            savePanel.SetActive(true);
         }
     }
 
