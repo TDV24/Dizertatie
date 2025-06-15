@@ -835,8 +835,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypoints: []
-  rotationSpeed: 1
-  maxSpeed: 4.5
+  acceleration: 10
+  rotationSpeed: 10
+  maxSpeed: 40
+  speed: 0
 --- !u!54 &8992946744054617309
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -898,6 +900,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceleration: 10
-  steering: 16
+  steering: 20
   maxSpeed: 40
   speed: 0

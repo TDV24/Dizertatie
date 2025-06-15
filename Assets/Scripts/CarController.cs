@@ -24,6 +24,52 @@ public class CarController : MonoBehaviour
     {
         rb = gameObject.GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        if(PlayerPrefs.GetInt("GameMode") == 5)
+        {
+            switch (PlayerPrefs.GetInt("TopSpeedLevel"))
+            {
+                case 1:
+                    maxSpeed += 3f;
+                    break;
+                case 2:
+                    maxSpeed += 6f;
+                    break;
+                case 3:
+                    maxSpeed += 10f;
+                    break;
+                default:
+                    break;
+            }
+            switch (PlayerPrefs.GetInt("HandlingLevel"))
+            {
+                case 1:
+                    steering += 2.5f;
+                    break;
+                case 2:
+                    steering += 5f;
+                    break;
+                case 3:
+                    steering += 7.5f;
+                    break;
+                default:
+                    break;
+            }
+            switch (PlayerPrefs.GetInt("AccelerationLevel"))
+            {
+                case 1:
+                    acceleration += 1.5f;
+                    break;
+                case 2:
+                    acceleration += 3f;
+                    break;
+                case 3:
+                    acceleration += 5f;
+                    break;
+                default:
+                    break;
+            }
+        }
+        
     }
     void Update()
     {

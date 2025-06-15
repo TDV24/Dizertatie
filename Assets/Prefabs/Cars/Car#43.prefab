@@ -835,8 +835,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypoints: []
-  rotationSpeed: 1
-  maxSpeed: 4.5
+  acceleration: 5
+  rotationSpeed: 5
+  maxSpeed: 31
+  speed: 0
 --- !u!54 &8992946744054617309
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -897,6 +899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d246845687b00a428d2f72cf845673e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  acceleration: 5
+  steering: 15
+  maxSpeed: 31
   speed: 0
-  maxSpeed: 0.18
-  acceleration: 0.02
