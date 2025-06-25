@@ -1,4 +1,3 @@
-using Palmmedia.ReportGenerator.Core.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -55,9 +54,30 @@ public class MenuScript : MonoBehaviour
     public TextMeshProUGUI HandlingText;
     public TextMeshProUGUI TopSpeedText;
     public TextMeshProUGUI AccelerationText;
+    //sound
+    [SerializeField] Slider music;
+    [SerializeField] Slider sfx;
     // Start is called before the first frame update
     void Start()
     {
+        if(!PlayerPrefs.HasKey("MusicVolume"))
+        {
+            PlayerPrefs.SetFloat("MusicVolume", 1);
+            LoadMusicVolume();
+        }
+        else
+        {
+            LoadMusicVolume();
+        }
+        if(!PlayerPrefs.HasKey("SFXVolume"))
+        {
+            PlayerPrefs.SetFloat("SFXVolume", 1);
+            LoadSFXVolume();
+        }
+        else
+        {
+            LoadSFXVolume();
+        }
         RaceTrackDropdown.ClearOptions();
         GPTrackDropdown.ClearOptions();
         RemoveDropdown.ClearOptions();
@@ -507,5 +527,30 @@ public class MenuScript : MonoBehaviour
         RaceTrackDropdown.RefreshShownValue();
         GPTrackDropdown.RefreshShownValue();
         RemoveDropdown.RefreshShownValue();
+    }
+    public void ChangeMusicVolume()
+    {
+        AudioListener.volume = music.value;
+        SaveMusicVolume();
+    }
+    private void SaveMusicVolume()
+    {
+        PlayerPrefs.SetFloat("MusicVolume", music.value);
+    }
+    private void LoadMusicVolume()
+    {
+        music.value = PlayerPrefs.GetFloat("MusicVolume");
+    }
+    public void ChangeSFXVolume()
+    {
+        SaveSFXVolume();
+    }
+    private void SaveSFXVolume()
+    {
+        PlayerPrefs.SetFloat("SFXVolume", sfx.value);
+    }
+    private void LoadSFXVolume()
+    {
+        sfx.value = PlayerPrefs.GetFloat("SFXVolume");
     }
 }

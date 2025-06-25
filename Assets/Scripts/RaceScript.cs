@@ -19,7 +19,9 @@ public class RaceScript : MonoBehaviour
     public GameObject Pausepanel;
     public GameObject Redlights;
     public AudioSource audioSource;
+    public AudioSource audioSource1;
     public AudioClip redbeep;
+    public AudioClip clutch;
     public int remainingtime = 7;
     public GameObject[] cars;
     public GameObject[] gridslots;
@@ -299,6 +301,7 @@ public class RaceScript : MonoBehaviour
             {
                 lights[4].SetActive(true);
                 audioSource.PlayOneShot(redbeep);
+                audioSource1.PlayOneShot(clutch);
             }
             if (remainingtime == 1)
             {
@@ -313,7 +316,6 @@ public class RaceScript : MonoBehaviour
         lights[3].SetActive(false);
         lights[4].SetActive(false);
         lights[5].SetActive(false);
-        yield return new WaitForSeconds(1f);
         foreach (GameObject car in spawnedcars)
         {
             if (car.name == playercar.name)
