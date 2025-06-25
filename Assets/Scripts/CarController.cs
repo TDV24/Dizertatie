@@ -96,7 +96,7 @@ public class CarController : MonoBehaviour
 
         if(Mathf.Abs(speed) > 0.1f)
         {
-            float turn = steering * Time.fixedDeltaTime;
+            float turn = steering * Time.deltaTime;
             turnRotation = Quaternion.Euler(0f, 0f, 0f);
             if (Input.GetKey(KeyCode.A))
             {

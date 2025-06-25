@@ -900,6 +900,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceleration: 5
-  steering: 14
+  steering: 24
   maxSpeed: 30
   speed: 0

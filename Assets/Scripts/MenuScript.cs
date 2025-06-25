@@ -197,7 +197,7 @@ public class MenuScript : MonoBehaviour
         if(PlayerPrefs.GetInt("GPQualy") == 0)
         {
             PlayerPrefs.SetInt("GameMode", 2);
-            if (GPTrack == "Track01" || GPTrack == "Track02")
+            if (PlayerPrefs.GetString("GPTrack") == "Track01" || PlayerPrefs.GetString("GPTrack") == "Track02")
                 SceneManager.LoadScene(GPTrack);
             else
             {
@@ -251,11 +251,11 @@ public class MenuScript : MonoBehaviour
         if(PlayerPrefs.GetInt("GPQualy") == 1)
         {
             PlayerPrefs.SetInt("GameMode", 3);
-            if (GPTrack == "Track01" || GPTrack == "Track02")
-                SceneManager.LoadScene(GPTrack);
+            if (PlayerPrefs.GetString("GPTrack") == "Track01" || PlayerPrefs.GetString("GPTrack") == "Track02")
+                SceneManager.LoadScene(PlayerPrefs.GetString("GPTrack"));
             else
             {
-                PlayerPrefs.SetString("FileName", GPTrack);
+                PlayerPrefs.SetString("FileName", PlayerPrefs.GetString("GPTrack"));
                 SceneManager.LoadScene("LoadGenerated");
             }
         }

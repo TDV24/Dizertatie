@@ -808,7 +808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceleration: 5
-  steering: 16
+  steering: 26
   maxSpeed: 32
   speed: 0
 --- !u!1 &9106032079838853702
